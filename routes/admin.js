@@ -479,6 +479,21 @@ router.get('/topdata', authenticateToken, isAdmin, async (req, res) => {
   }
 });
 
+router.get('/users/topdata',  async (req, res) => {
+  try {
+    const topDataList = await TopData.find({ isActive: true })
+      .populate('createdBy', 'name email')
+      .populate('updatedBy', 'name email')
+      .sort({ createdAt: -1 });
+
+    res.json({
+      topDataList
+    });
+  } catch (error) {
+    console.error('Get top data error:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
 // Get Single Top Data (Admin only)
 router.get('/topdata/:id', authenticateToken, isAdmin, async (req, res) => {
   try {
