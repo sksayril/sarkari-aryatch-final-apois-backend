@@ -11,6 +11,10 @@ const mainCategorySchema = new mongoose.Schema({
     ref: 'User', 
     required: true 
   },
+  updatedBy: { 
+    type: mongoose.Schema.Types.ObjectId, 
+    ref: 'User' 
+  },
   isActive: {
     type: Boolean,
     default: true

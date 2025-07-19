@@ -203,6 +203,145 @@ router.get('/categories/main', authenticateToken, isAdmin, async (req, res) => {
   }
 });
 
+// Get Single Main Category by ID (Admin only)
+router.get('/categories/main/:id', authenticateToken, isAdmin, async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // Validate ObjectId format
+    const mongoose = require('mongoose');
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ 
+        success: false,
+        message: 'Invalid ID format' 
+      });
+    }
+
+    const category = await MainCategory.findById(id)
+      .populate('createdBy', 'name email')
+      .populate('updatedBy', 'name email');
+
+    if (!category) {
+      return res.status(404).json({ 
+        success: false,
+        message: 'Main category not found' 
+      });
+    }
+
+    res.json({
+      success: true,
+      data: category
+    });
+  } catch (error) {
+    console.error('Get main category error:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// Update Main Category (Admin only)
+router.put('/categories/main/:id', authenticateToken, isAdmin, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { title, isActive } = req.body;
+
+    // Validate ObjectId format
+    const mongoose = require('mongoose');
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ 
+        success: false,
+        message: 'Invalid ID format' 
+      });
+    }
+
+    // Check if main category exists
+    const category = await MainCategory.findById(id);
+    if (!category) {
+      return res.status(404).json({ 
+        success: false,
+        message: 'Main category not found' 
+      });
+    }
+
+    // Check if title already exists (excluding current category)
+    if (title && title !== category.title) {
+      const existingCategory = await MainCategory.findOne({ 
+        title, 
+        _id: { $ne: id } 
+      });
+      if (existingCategory) {
+        return res.status(400).json({ 
+          success: false,
+          message: 'Category with this title already exists' 
+        });
+      }
+    }
+
+    // Prepare update data
+    const updateData = {
+      updatedBy: req.user.userId
+    };
+
+    if (title !== undefined) updateData.title = title;
+    if (isActive !== undefined) updateData.isActive = isActive;
+
+    const updatedCategory = await MainCategory.findByIdAndUpdate(
+      id,
+      updateData,
+      { new: true, runValidators: true }
+    )
+      .populate('createdBy', 'name email')
+      .populate('updatedBy', 'name email');
+
+    res.json({
+      success: true,
+      message: 'Main category updated successfully',
+      data: updatedCategory
+    });
+  } catch (error) {
+    console.error('Update main category error:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// Delete Main Category (Admin only)
+router.delete('/categories/main/:id', authenticateToken, isAdmin, async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // Validate ObjectId format
+    const mongoose = require('mongoose');
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ 
+        success: false,
+        message: 'Invalid ID format' 
+      });
+    }
+
+    // Check if main category exists
+    const category = await MainCategory.findById(id);
+    if (!category) {
+      return res.status(404).json({ 
+        success: false,
+        message: 'Main category not found' 
+      });
+    }
+
+    // Soft delete by setting isActive to false
+    await MainCategory.findByIdAndUpdate(id, { 
+      isActive: false,
+      updatedBy: req.user.userId
+    });
+
+    res.json({
+      success: true,
+      message: 'Main category deleted successfully'
+    });
+  } catch (error) {
+    console.error('Delete main category error:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
 // Create Sub Category (Admin only)
 router.post('/categories/sub', authenticateToken, isAdmin, async (req, res) => {
   try {
