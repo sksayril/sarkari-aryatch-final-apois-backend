@@ -395,7 +395,8 @@ router.get('/categories/sub', authenticateToken, isAdmin, async (req, res) => {
     const subCategories = await SubCategory.find({ isActive: true })
       .populate('mainCategory', 'title')
       .populate('createdBy', 'name email')
-      .populate('updatedBy', 'name email');
+      .populate('updatedBy', 'name email')
+      .sort({ createdAt: -1 }); // Newest first
 
     res.json({
       subCategories
