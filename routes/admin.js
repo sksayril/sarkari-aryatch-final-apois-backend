@@ -394,10 +394,10 @@ router.post('/categories/sub', authenticateToken, isAdmin, async (req, res) => {
 router.get('/categories/sub', authenticateToken, isAdmin, async (req, res) => {
   try {
     const subCategories = await SubCategory.find({ isActive: true })
-      .populate('mainCategory', 'title')
+      .populate('mainCategory', 'title createdAt')
       .populate('createdBy', 'name email')
       .populate('updatedBy', 'name email')
-      .sort({ createdAt: -1 }); // Newest first
+      .sort({ 'mainCategory.createdAt': -1 }); // Sort by main category creation date (newest first)
 
     res.json({
       subCategories
@@ -423,7 +423,7 @@ router.get('/categories/sub/:id', authenticateToken, isAdmin, async (req, res) =
     }
 
     const subCategory = await SubCategory.findById(id)
-      .populate('mainCategory', 'title')
+      .populate('mainCategory', 'title createdAt')
       .populate('createdBy', 'name email')
       .populate('updatedBy', 'name email');
 
@@ -507,7 +507,7 @@ router.put('/categories/sub/:id', authenticateToken, isAdmin, async (req, res) =
       updateData,
       { new: true, runValidators: true }
     )
-      .populate('mainCategory', 'title')
+      .populate('mainCategory', 'title createdAt')
       .populate('createdBy', 'name email')
       .populate('updatedBy', 'name email');
 

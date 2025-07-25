@@ -46,7 +46,7 @@ router.get('/main/:id', async (req, res) => {
 router.get('/sub', async (req, res) => {
   try {
     const subCategories = await SubCategory.find({ isActive: true })
-      .populate('mainCategory', 'title')
+      .populate('mainCategory', 'title createdAt')
       .select('metaTitle metaDescription keywords tags contentTitle contentDescription mainCategory')
       .sort({ 'mainCategory.createdAt': -1 }); // Sort by main category creation date (newest first)
 
@@ -68,9 +68,9 @@ router.get('/sub/main/:mainCategoryId', async (req, res) => {
       mainCategory: mainCategoryId, 
       isActive: true 
     })
-      .populate('mainCategory', 'title')
+      .populate('mainCategory', 'title createdAt')
       .select('metaTitle metaDescription keywords tags contentTitle contentDescription mainCategory')
-      .sort({ createdAt: -1 });
+      .sort({ 'mainCategory.createdAt': -1 }); // Sort by main category creation date (newest first)
 
     res.json({
       subCategories
@@ -87,7 +87,7 @@ router.get('/sub/:id', async (req, res) => {
     const { id } = req.params;
 
     const subCategory = await SubCategory.findById(id)
-      .populate('mainCategory', 'title')
+      .populate('mainCategory', 'title createdAt')
       .select('metaTitle metaDescription keywords tags contentTitle contentDescription mainCategory');
 
     if (!subCategory) {
@@ -117,9 +117,9 @@ router.get('/sub/search/:query', async (req, res) => {
       ],
       isActive: true
     })
-      .populate('mainCategory', 'title')
+      .populate('mainCategory', 'title createdAt')
       .select('metaTitle metaDescription keywords tags contentTitle contentDescription mainCategory')
-      .sort({ createdAt: -1 });
+      .sort({ 'mainCategory.createdAt': -1 }); // Sort by main category creation date (newest first)
 
     res.json({
       subCategories
