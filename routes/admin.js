@@ -192,7 +192,8 @@ router.post('/categories/main', authenticateToken, isAdmin, async (req, res) => 
 router.get('/categories/main', authenticateToken, isAdmin, async (req, res) => {
   try {
     const categories = await MainCategory.find({ isActive: true })
-      .populate('createdBy', 'name email');
+      .populate('createdBy', 'name email')
+      .sort({ createdAt: -1 }); // Newest first
 
     res.json({
       categories
@@ -608,7 +609,7 @@ router.get('/topdata', authenticateToken, isAdmin, async (req, res) => {
     const topDataList = await TopData.find({ isActive: true })
       .populate('createdBy', 'name email')
       .populate('updatedBy', 'name email')
-      .sort({ createdAt: -1 });
+      .sort({ createdAt: -1 }); // Newest first
 
     res.json({
       topDataList
@@ -624,7 +625,7 @@ router.get('/users/topdata',  async (req, res) => {
     const topDataList = await TopData.find({ isActive: true })
       .populate('createdBy', 'name email')
       .populate('updatedBy', 'name email')
-      .sort({ createdAt: -1 });
+      .sort({ createdAt: -1 }); // Newest first
 
     res.json({
       topDataList

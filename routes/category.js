@@ -48,7 +48,7 @@ router.get('/sub', async (req, res) => {
     const subCategories = await SubCategory.find({ isActive: true })
       .populate('mainCategory', 'title')
       .select('metaTitle metaDescription keywords tags contentTitle contentDescription mainCategory')
-      .sort({ createdAt: -1 }); // Newest first
+      .sort({ 'mainCategory.createdAt': -1 }); // Sort by main category creation date (newest first)
 
     res.json({
       subCategories
@@ -135,7 +135,7 @@ router.get('/topdata', async (req, res) => {
   try {
     const topDataList = await TopData.find({ isActive: true })
       .select('metaTitle metaDescription keywords tags contentTitle contentDescription colorCode')
-      // .sort({ _id: -1 });
+      .sort({ createdAt: -1 }); // Newest first
 
     res.json({
       topDataList
