@@ -17,6 +17,7 @@ var thumbnailRouter = require('./routes/thumbnail');
 
 var app = express();
 
+// app.use(cors());
 app.use(cors());
 app.use(logger('dev'));
 app.use(express.json({ limit: '50mb' }));
