@@ -135,7 +135,7 @@ router.get('/topdata', async (req, res) => {
   try {
     const topDataList = await TopData.find({ isActive: true })
       .select('metaTitle metaDescription keywords tags contentTitle contentDescription colorCode')
-      .sort({ createdAt: -1 }); // Newest first
+      // .sort({ createdAt: -1 }); // Newest first
 
     res.json({
       topDataList

@@ -13,6 +13,7 @@ var employeeRouter = require('./routes/employee');
 var categoryRouter = require('./routes/category');
 var homeContentRouter = require('./routes/homeContent');
 var latestJobsRouter = require('./routes/latestJobs');
+var thumbnailRouter = require('./routes/thumbnail');
 
 var app = express();
 
@@ -30,5 +31,6 @@ app.use('/employee', employeeRouter);
 app.use('/category', categoryRouter);
 app.use('/home-content', homeContentRouter);
 app.use('/latest-jobs', latestJobsRouter);
+app.use('/thumbnails', thumbnailRouter);
 
 module.exports = app;
