@@ -47,7 +47,8 @@ router.get('/sub', async (req, res) => {
   try {
     const subCategories = await SubCategory.find({ isActive: true })
       .populate('mainCategory', 'title')
-      .select('metaTitle metaDescription keywords tags contentTitle contentDescription mainCategory')
+      // .select('metaTitle metaDescription keywords tags contentTitle contentDescription mainCategory')
+      .select('metaTitle metaDescription keywords tags contentTitle  mainCategory')
       .sort({ 'mainCategory.createdAt': -1 }); // Sort by main category creation date (newest first)
 
     res.json({
